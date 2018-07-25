@@ -3,17 +3,21 @@
 # Do we want to modify the config first with the script?
 [ -f /etc/service/postfix/run.config ] && source /etc/service/postfix/run.config
 
-if [ "$MAILNAME" ]; then
+if [ -n "$MAILNAME" ]; then
   echo "$MAILNAME" > /etc/mailname
   postconf -e myhostname="$MAILNAME"
 fi
 
-if [ "$MY_NETWORKS" ]; then
+if [ -n "$MY_NETWORKS" ]; then
   postconf -e mynetworks="$MY_NETWORKS"
 fi
 
-if [ "$MY_DESTINATION" ]; then
+if [ -n "$MY_DESTINATION" ]; then
   postconf -e mydestination="$MY_DESTINATION"
+fi
+
+if [ -n "$RELAYHOST" ]; then
+  postconf -e "relayhost=$RELAYHOST"
 fi
 
 if [ "$ROOT_ALIAS" ]; then
