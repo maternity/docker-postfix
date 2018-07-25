@@ -18,6 +18,26 @@ fi
 
 if [ -n "$RELAYHOST" ]; then
   postconf -e "relayhost=$RELAYHOST"
+
+  if [ -n "$RELAYHOST_PASSWORD" ]; then
+    # We need a secure channel to send plaintext passwords/apikeys.
+    postconf -e smtp_tls_security_level=verify
+    # NOTE: Setting tls_append_default_CA=yes doesn't work, for two reasons:
+    # 1) The default CA doesn't appear in the chroot.
+    # 2) The default CA loading code branch doesn't run unless CAfile or CApath
+    #    is set.
+    # So, rather than work around all that, we can just ask for the default CA
+    # path to be used (and synced to the chroot).
+    postconf -e smtp_tls_CApath=/usr/lib/ssl/certs
+
+    postconf -e smtp_sasl_auth_enable=yes
+    postconf -e smtp_sasl_tls_verified_security_options=noanonymous
+    postconf -e smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+    cat >/etc/postfix/sasl_passwd <<EOF
+$RELAYHOST       $RELAYHOST_USERNAME:$RELAYHOST_PASSWORD
+EOF
+    postmap hash:/etc/postfix/sasl_passwd
+  fi
 fi
 
 if [ "$ROOT_ALIAS" ]; then

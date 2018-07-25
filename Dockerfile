@@ -23,6 +23,6 @@ RUN apt-get update -q -q && \
  postconf -e smtpd_banner='$myhostname ESMTP $mail_name' && \
  postconf -# myhostname && \
  postconf -e inet_protocols=ipv4 && \
- apt-get --yes --force-yes --no-install-recommends install rsyslog
+ apt-get --yes --force-yes --no-install-recommends install rsyslog ca-certificates
 
 COPY ./etc /etc
