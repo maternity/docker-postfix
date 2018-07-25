@@ -23,7 +23,6 @@ RUN apt-get update -q -q && \
  postconf -e smtpd_banner='$myhostname ESMTP $mail_name' && \
  postconf -# myhostname && \
  postconf -e inet_protocols=ipv4 && \
- apt-get --yes --force-yes --no-install-recommends install rsyslog && \
- sed -i 's/\/var\/log\/mail/\/var\/log\/postfix\/mail/' /etc/rsyslog.d/50-default.conf
+ apt-get --yes --force-yes --no-install-recommends install rsyslog
 
 COPY ./etc /etc
